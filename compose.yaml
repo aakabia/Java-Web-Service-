@@ -1,0 +1,53 @@
+
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+
+services:
+
+
+  spring-app:
+    image: banking-system:1.0
+    build:
+      context: .  # Build the image from the Dockerfile in the current directory
+      target: final # Docker Compose will only execute the build instructions up to and including the specified stage in your Dockerfile
+    ports:
+      - "8081:8081" # Map host port 8081 to container port 8081
+    environment:
+      # Example environment variables for database connection
+      SPRING_DATASOURCE_URL: ${DB_URL}  # make sure "db" in our actual url matches "db" in service
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
+    depends_on:
+        db:
+          condition: service_healthy # Ensure the database starts before the Spring app
+
+
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+
+    healthcheck:
+        test: [ "CMD", "pg_isready", "-U", "postgres" ]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
+    volumes:
+        - db_data:/var/lib/postgresql/data
+
+  adminer:
+      image: adminer
+      restart: always
+      ports:
+        - "8080:8080"
+
+
+volumes:
+    db_data:  # Define a named volume for database persistence
