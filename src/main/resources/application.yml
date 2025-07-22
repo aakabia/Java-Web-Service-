@@ -13,3 +13,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+
+  security:
+    jwt:
+      secret-key: ${SECRET}
+      expiration-time: 300000
