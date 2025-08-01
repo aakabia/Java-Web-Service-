@@ -26,6 +26,9 @@ public class JwtService {
     @Value("${spring.security.jwt.expiration-time}")
     private long jwtExpiration;
 
+    @Value("${spring.security.jwt.refresh-token.expiration}")
+    private long jwtRefreshExpiration;
+
 
     // generating a token with basic claims,subject and NO extra claims
     public String generateToken(UserDetails userDetails){
@@ -35,12 +38,28 @@ public class JwtService {
 
     // generating a token with basic claims,subject and extra claims
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails){
+        return buildToken(extraClaims, userDetails, jwtExpiration );
+    }
+
+
+    // generating a refresh  token with basic claims,subject and no claims because it is used to refresh a new token
+    public String generateRefreshToken(UserDetails userDetails){
+
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("token_type", "REFRESH");
+        return buildToken(extraClaims, userDetails, jwtRefreshExpiration );
+    }
+
+
+    // token builder used to generate our primary and refresh token
+    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration){
+
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -49,7 +68,7 @@ public class JwtService {
     // check for token validation using username and expiration of the token
     public boolean isTokenValid(String jwtToken, UserDetails userDetails){
         final String username = extractUsername(jwtToken);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken );
     }
 
     // check if token expiration date is before current date
@@ -70,7 +89,7 @@ public class JwtService {
     }
 
 
-    //This is a reusable function that extracts a claim from our claims.
+    //This is a reusable function that uses a functional Interface that extracts a claim from our claims.
     public <T> T extractClaim(String jwtToken, Function<Claims, T> claimsResolver ){
         final Claims claims  = extractAllClaims(jwtToken);
         return claimsResolver.apply(claims);

@@ -4,6 +4,7 @@ package com.example.demo.model;
 import jakarta.persistence.*; // for database storage and retrieval,
 import lombok.*; // for constructing classes
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,6 +34,11 @@ public class User implements Serializable, UserDetails {
     private String firstName;
     private String lastName;
     private String password;
+    private String phoneNumber;
+
+    /* below for mfa authentication*/
+//    private boolean mfaEnabled;
+//    private String secret;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
@@ -40,6 +46,10 @@ public class User implements Serializable, UserDetails {
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date modifiedAt;
 
     /* OneToMany relationship provides a unidirectional relationship between parent and child , one user (parent) can have many accounts (child) */
     /* On delete we will cascade all the related data to this user and remove any orphan data  */

@@ -2,6 +2,7 @@ package com.example.demo.config;
 
 
 
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,8 @@ public class WebSecurityConfig  {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -41,7 +44,11 @@ public class WebSecurityConfig  {
 
 
                 )
-                .logout((logout) -> logout.disable());
+                .logout(l -> l.disable());
+
+
+
+
 
 
         return http.build();
