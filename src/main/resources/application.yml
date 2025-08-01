@@ -1,6 +1,10 @@
 server:
   port: 8081
 
+
+frontend:
+  base-url: ${FRONT_END_DEV_URL}
+
 spring:
   config:
     import: env.properties
@@ -19,3 +23,6 @@ spring:
     jwt:
       secret-key: ${SECRET}
       expiration-time: 300000
+      refresh-token:
+        expiration: 900000
+

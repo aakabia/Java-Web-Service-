@@ -2,6 +2,7 @@ package com.example.demo.exception;
 
 import com.example.demo.exception.customExceptions.EmailException;
 import com.example.demo.exception.customExceptions.PasswordException;
+import com.example.demo.exception.customExceptions.PhoneNumberException;
 import com.example.demo.exception.customExceptions.UserNameException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,11 @@ public class ProjectGlobalExceptions {
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<String> handleUserNameNotFoundException (UserNameException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(PhoneNumberException.class)
+    public ResponseEntity<String> handleUserPhoneNumberException (UserNameException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 

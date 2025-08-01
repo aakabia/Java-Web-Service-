@@ -4,6 +4,7 @@ package com.example.demo.utilities;
 import com.example.demo.auth.authModel.RegisterRequest;
 import com.example.demo.exception.customExceptions.EmailException;
 import com.example.demo.exception.customExceptions.PasswordException;
+import com.example.demo.exception.customExceptions.PhoneNumberException;
 import com.example.demo.exception.customExceptions.UserNameException;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,11 @@ public class UserFieldsValidator {
     private final UserRepository userRepository;
 
 
-     public boolean areAllFieldsValidated(RegisterRequest request) throws EmailException, UserNameException, PasswordException {
+     public boolean areAllFieldsValidated(RegisterRequest request) throws EmailException, UserNameException, PasswordException, PhoneNumberException {
 
 
         Pattern pattern = Pattern.compile("^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])(.+)$");
+        Pattern phoneNumberPattern = Pattern.compile("^(\\+\\d{1,2}\\s?)?1?\\-?\\.?\\s?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$");
 
 
         /* validate email */
@@ -87,6 +89,19 @@ public class UserFieldsValidator {
          }
          else if (request.getFirstName().length() < 3 || request.getLastName().length() < 3){
              throw new UserNameException("First and last name must be at least 3 chars long! ");
+         }
+
+
+         /* validate phone number */
+         if(request.getPhoneNumber() == null){
+             throw new PhoneNumberException("Please provide a valid phone number!");
+         }
+
+         Matcher phoneNumberMatcher = phoneNumberPattern.matcher(request.getPhoneNumber());
+         boolean phoneMatchFound = phoneNumberMatcher.matches();
+
+         if(!phoneMatchFound){
+             throw new PhoneNumberException("Please provide a valid phone number!");
          }
 
          return true;

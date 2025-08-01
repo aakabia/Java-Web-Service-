@@ -12,7 +12,7 @@ services:
       context: .  # Build the image from the Dockerfile in the current directory
       target: final # Docker Compose will only execute the build instructions up to and including the specified stage in your Dockerfile
     ports:
-      - "8081:8081" # Map host port 8081 to container port 8081
+      - "${BACKEND_PORT}:${BACKEND_PORT}" # Map host port 8081 to container port 8081
     environment:
       # Example environment variables for database connection
       SPRING_DATASOURCE_URL: ${DB_URL}  # make sure "db" in our actual url matches "db" in service
@@ -46,7 +46,7 @@ services:
       image: adminer
       restart: always
       ports:
-        - "8080:8080"
+        - "${ADMINER_PORT}:${ADMINER_PORT}"
 
 
 volumes:

@@ -1,6 +1,7 @@
 package com.example.demo.config;
 
 import com.example.demo.service.JwtService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,16 +34,46 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwtToken;
         final String userName;
 
+
+
         // check if Authorization exists
         // If the header does not exist move on to the next filter
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response); // continues request
             return;
         }
 
 
         // extract token from authHeader
         jwtToken = authHeader.substring(7);
+
+
+        String tokenType = jwtService.extractClaim(jwtToken, claims -> claims.get("token_type", String.class)); // get specific claim
+        String path = request.getRequestURI(); // get request URI
+
+
+
+        // Allow refresh tokens ONLY at /refresh-token
+        // Do not allow Access token on refresh token route
+        // Do not use filterChain.doFilter because we handle request here
+        if ("REFRESH".equals(tokenType)) {
+            if (!path.equals("/refresh-token")) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("Refresh token not allowed here");
+                return;
+            }
+
+        }else if ("ACCESS".equals(tokenType)) {
+            if (path.equals("/refresh-token")) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("ACCESS token not allowed here");
+                return;
+            }
+
+        }
+
+
+
 
         userName = jwtService.extractUsername(jwtToken);
 
