@@ -35,12 +35,17 @@ public class User implements Serializable, UserDetails {
     private String lastName;
     private String password;
     private String phoneNumber;
+    private boolean userAccountEnabled;
+    private boolean userAccountLocked;
+    private String verificationToken;
+    private String opaqueToken;
+    private String resetVerificationToken;
+    private String resetOpaqueToken;
+    private String resetCode;
 
-    /* below for mfa authentication*/
-//    private boolean mfaEnabled;
-//    private String secret;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+
+    @ElementCollection(fetch = FetchType.EAGER) //This is a collection of simple values (or embeddable objects), not entities
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
     @CreationTimestamp

@@ -1,7 +1,6 @@
 package com.example.demo.config;
 
 import com.example.demo.service.JwtService;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,17 +58,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if ("REFRESH".equals(tokenType)) {
             if (!path.equals("/refresh-token")) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("Refresh token not allowed here");
+                response.getWriter().write("Only ACCESS Tokens are allowed here!");
                 return;
             }
 
         }else if ("ACCESS".equals(tokenType)) {
             if (path.equals("/refresh-token")) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("ACCESS token not allowed here");
+                response.getWriter().write("Only REFRESH Tokens are allowed here!");
                 return;
             }
 
+        }else if ("VERIFY".equals(tokenType)) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("Verification tokens are only used to Verify!");
+                return;
         }
 
 

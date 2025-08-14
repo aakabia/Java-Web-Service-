@@ -19,9 +19,6 @@ public class RegisterRequest {
     private String password;
     private String phoneNumber;
 
-    /* below for mfa authentication*/
-//    private boolean mfaEnabled;
-
 
 }
 
