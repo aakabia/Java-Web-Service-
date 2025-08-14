@@ -3,7 +3,10 @@ server:
 
 
 frontend:
-  base-url: ${FRONT_END_DEV_URL}
+  base-url: ${FRONT_END_URL} # change in production
+
+backend:
+  base-url: ${BACK_END_URL} # change in production
 
 spring:
   config:
@@ -18,6 +21,18 @@ spring:
     hibernate:
       ddl-auto: update
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_EMAIL_ADDRESS}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 
   security:
     jwt:
@@ -25,4 +40,5 @@ spring:
       expiration-time: 300000
       refresh-token:
         expiration: 900000
-
+      verification-token:
+        expiration: 180000

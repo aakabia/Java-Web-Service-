@@ -29,6 +29,9 @@ public class JwtService {
     @Value("${spring.security.jwt.refresh-token.expiration}")
     private long jwtRefreshExpiration;
 
+    @Value("${spring.security.jwt.verification-token.expiration}")
+    private long jwtVerificationExpiration;
+
 
     // generating a token with basic claims,subject and NO extra claims
     public String generateToken(UserDetails userDetails){
@@ -51,6 +54,16 @@ public class JwtService {
     }
 
 
+    // generating a refresh  token with basic claims,subject and no claims because it is used to refresh a new token
+    public String generateVerificationToken(UserDetails userDetails){
+
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("token_type", "VERIFY");
+        return buildToken(extraClaims, userDetails, jwtVerificationExpiration);
+    }
+
+
+
     // token builder used to generate our primary and refresh token
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration){
 
@@ -67,8 +80,15 @@ public class JwtService {
 
     // check for token validation using username and expiration of the token
     public boolean isTokenValid(String jwtToken, UserDetails userDetails){
-        final String username = extractUsername(jwtToken);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken );
+        try {
+            final String username = extractUsername(jwtToken);
+            return username.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken);
+        } catch (ExpiredJwtException e) {
+            return false; // expired tokens are treated as invalid
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // any other invalid token
+        }
     }
 
     // check if token expiration date is before current date
@@ -89,7 +109,7 @@ public class JwtService {
     }
 
 
-    //This is a reusable function that uses a functional Interface that extracts a claim from our claims.
+    //This is a reusable function that uses a functional Interface that extracts a claim from our claims in jwt.
     public <T> T extractClaim(String jwtToken, Function<Claims, T> claimsResolver ){
         final Claims claims  = extractAllClaims(jwtToken);
         return claimsResolver.apply(claims);
