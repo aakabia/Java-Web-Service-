@@ -1,6 +1,7 @@
 package com.example.demo.utilities;
 
 
+import com.example.demo.auth.authModel.PasswordChangeRequest;
 import com.example.demo.auth.authModel.RegisterRequest;
 import com.example.demo.exception.customExceptions.EmailException;
 import com.example.demo.exception.customExceptions.PasswordException;
@@ -23,6 +24,8 @@ public class UserFieldsValidator {
 
     private final UserRepository userRepository;
 
+
+    // areAllFieldsValidated validates all user fields on user registration
 
      public boolean areAllFieldsValidated(RegisterRequest request) throws EmailException, UserNameException, PasswordException, PhoneNumberException {
 
@@ -110,6 +113,33 @@ public class UserFieldsValidator {
      }
 
 
+     // validates a users password when re setting a users' password.
+
+    public boolean passwordValidator(PasswordChangeRequest request) throws PasswordException {
+
+        Pattern pattern = Pattern.compile("^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])(.+)$");
+
+        /* validate password */
+        if (request.getNewPassword() == null) {
+            throw new PasswordException("Please provide a password!");
+        }
+
+        Matcher matcher = pattern.matcher(request.getNewPassword());
+        boolean matchFound = matcher.matches();
 
 
-}
+        if (request.getNewPassword().length() < 8) {
+            throw new PasswordException("Password length must be at least 8 chars long!");
+        } else if (request.getNewPassword().length() > 15) {
+            throw new PasswordException("Password length must be less than 15 chars long!");
+        } else if (!matchFound) {
+            throw new PasswordException("Password must include at least one special char, uppercase letter and number!");
+        }
+
+        return true;
+    }
+
+
+
+
+    }

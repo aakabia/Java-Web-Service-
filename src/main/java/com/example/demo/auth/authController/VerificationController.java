@@ -26,6 +26,7 @@ public class VerificationController {
     private String frontEndDevUrl;
 
 
+    // very user route that is used within email template "email-content.html"
 
     @GetMapping("/verify")
     public String verifyToken(@RequestParam(required = true, name = "token", defaultValue = "NONE") String token, Model model){
@@ -43,6 +44,7 @@ public class VerificationController {
 
     }
 
+    // resend verification email route that is used within email template " verification-email-expired.html"
 
     @GetMapping("/verify/resend-email")
     public String resendEmail(@RequestParam(required = true, name = "token", defaultValue = "NONE") String token, Model model) throws EmailSenderException {
@@ -61,4 +63,8 @@ public class VerificationController {
         return "resend-success";
 
     }
+
+
+
+
 }

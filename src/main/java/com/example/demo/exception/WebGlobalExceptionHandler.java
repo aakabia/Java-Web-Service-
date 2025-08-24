@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class WebGlobalExceptionHandler {
 
+    // WebGlobalExceptionHandler is for our @Controller global exceptions
+
     @Value("${frontend.base-url}")
     private String frontEndDevUrl;
 

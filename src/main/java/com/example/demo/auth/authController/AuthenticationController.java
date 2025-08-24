@@ -56,12 +56,13 @@ public class AuthenticationController {
 
     // login post route
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) throws EnableUserAccountException, EmailSenderException {
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) throws EnableUserAccountException, EmailSenderException, UserAccountLockedException {
 
         return ResponseEntity.ok(authenticationService.login(request));
 
     }
 
+    // refresh token route
     @PostMapping("/refresh-token")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException, EnableUserAccountException {
 

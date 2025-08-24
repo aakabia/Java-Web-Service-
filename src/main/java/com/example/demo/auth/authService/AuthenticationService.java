@@ -87,6 +87,7 @@ public class AuthenticationService {
 
         userRepository.save(user);
 
+        // send verification email
         emailService.sendEmail(user,template,subject,errorMessage);
 
          return String.format("User Registration Successful for %s", user.getEmail());
@@ -102,7 +103,7 @@ public class AuthenticationService {
     // remember authenticationManager works alongside authenticationProvider
 
     @Transactional
-    public AuthenticationResponse login(AuthenticationRequest request) throws EnableUserAccountException, EmailSenderException {
+    public AuthenticationResponse login(AuthenticationRequest request) throws EnableUserAccountException, EmailSenderException, UserAccountLockedException {
 
         Map<String, Object> extraClaims = new HashMap<>();
         String template = "email-content.html";
@@ -115,7 +116,11 @@ public class AuthenticationService {
                 });
 
 
-        // todo: check if user account locked
+        // checks if user account locked
+
+        if(user.isUserAccountLocked()){
+            throw new UserAccountLockedException("Sorry, User Account is Locked!");
+        }
 
 
         if(!user.isUserAccountEnabled() && !jwtService.isTokenValid(user.getVerificationToken(),user)){
