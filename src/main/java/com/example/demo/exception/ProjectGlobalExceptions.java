@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ProjectGlobalExceptions {
 
+    // ProjectGlobalExceptions is for our @RestController global exceptions
+
     @ExceptionHandler(EmailException.class)
     public ResponseEntity<String> handleEmailException (EmailException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
@@ -38,6 +40,16 @@ public class ProjectGlobalExceptions {
     @ExceptionHandler(EnableUserAccountException.class)
     public ResponseEntity<String> handleEnableUserAccountException (EnableUserAccountException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFoundException (UserNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(UserAccountLockedException.class)
+    public ResponseEntity<String> handleUserAccountLockedException (UserAccountLockedException exception){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception.getMessage());
     }
 
 

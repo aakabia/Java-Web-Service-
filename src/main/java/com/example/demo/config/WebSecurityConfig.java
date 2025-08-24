@@ -35,11 +35,20 @@ public class WebSecurityConfig  {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers(
+                                "/js/**",
+                                "/css/**",
+                                "/images/**",
+                                "/webjars/**"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.GET,"/").permitAll()
                         .requestMatchers(HttpMethod.GET,"/verify/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/reset/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/password-reset-failed").permitAll()
                         .requestMatchers(HttpMethod.POST, "/register/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/reset/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/username/recovery/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER")
                         .anyRequest().authenticated()
